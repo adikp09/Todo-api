@@ -60,6 +60,20 @@ app.post('/todos', function(req, res){
 	res.json(body);
 });
 
+app.delete('/todos/:id', function(req, res){
+	var todoId = parseInt(req.params.id, 10);
+	var cocok = _.findWhere(todos,{id: todoId});
+
+	if (!cocok) {
+		res.status(404).send();
+	}else{
+		todos = _.without(todos, cocok)
+		res.json(cocok);
+	}
+
+	res.json('Asking for todo with id of ' +req.params.id);
+});
+
 
 app.listen(PORT, function(){
 	console.log('Express listening on port: ' + PORT);
