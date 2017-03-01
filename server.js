@@ -13,18 +13,24 @@ app.get('/', function (req, res) {
 	res.send('Todo API Root');
 });
 
-// GET /todos
+// GET /todos?completed=false&q=work
 app.get('/todos', function (req, res) {
 	var queryParams = req.query;
-	var filteredTool = todos;
+	var filteredTodos = todos;
 
 	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
-		filteredTool = _.where(filteredTool, {completed: true});
+		filteredTodos = _.where(filteredTodos, {completed: true});
 	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
-		filteredTool = _.where(filteredTool, {completed: false});
+		filteredTodos = _.where(filteredTodos, {completed: false});
 	}
 
-	res.json(filteredTool);
+	if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
+		filteredTodos = _.filter(filteredTodos, function (todo) {
+			return todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1;
+		});
+	}
+
+	res.json(filteredTodos);
 });
 
 // GET /todos/:id
@@ -98,6 +104,3 @@ app.put('/todos/:id', function (req, res) {
 app.listen(PORT, function () {
 	console.log('Express listening on port ' + PORT + '!');
 });
-
-
-
